@@ -71,31 +71,6 @@ const Login = () => {
                         </div>
 
                         <form action="#" className="mt-8 grid grid-cols-6 gap-6">
-                            <div className="col-span-6 sm:col-span-3">
-                                <label htmlFor="FirstName" className="block text-sm font-medium text-gray-700">
-                                    First Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="FirstName"
-                                    name="first_name"
-                                    className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
-                                />
-                            </div>
-
-                            <div className="col-span-6 sm:col-span-3">
-                                <label htmlFor="LastName" className="block text-sm font-medium text-gray-700">
-                                    Last Name
-                                </label>
-
-                                <input
-                                    type="text"
-                                    id="LastName"
-                                    name="last_name"
-                                    className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
-                                />
-                            </div>
 
                             <div className="col-span-6">
                                 <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Email </label>
@@ -108,7 +83,7 @@ const Login = () => {
                                 />
                             </div>
 
-                            <div className="col-span-6 sm:col-span-3">
+                            <div className="col-span-6 ">
                                 <label htmlFor="Password" className="block text-sm font-medium text-gray-700"> Password </label>
 
                                 <input
@@ -119,18 +94,6 @@ const Login = () => {
                                 />
                             </div>
 
-                            <div className="col-span-6 sm:col-span-3">
-                                <label htmlFor="PasswordConfirmation" className="block text-sm font-medium text-gray-700">
-                                    Password Confirmation
-                                </label>
-
-                                <input
-                                    type="password"
-                                    id="PasswordConfirmation"
-                                    name="password_confirmation"
-                                    className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
-                                />
-                            </div>
 
                             <div className="col-span-6">
                                 <label htmlFor="MarketingAccept" className="flex gap-4">
@@ -142,17 +105,17 @@ const Login = () => {
                                     />
 
                                     <span className="text-sm text-gray-700">
-                                        I want to receive emails about events, product updates and company announcements.
+                                        Remember me
                                     </span>
                                 </label>
                             </div>
 
                             <div className="col-span-6">
                                 <p className="text-sm text-gray-500">
-                                    By creating an account, you agree to our
+                                    You agree to our
                                     <a href="#" className="text-gray-700 underline"> terms and conditions </a>
                                     and
-                                    <a href="#" className="text-gray-700 underline">privacy policy</a>.
+                                    <a href="#" className="text-gray-700 underline"> privacy policy</a>.
                                 </p>
                             </div>
 
@@ -160,12 +123,12 @@ const Login = () => {
                                 <button
                                     className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
                                 >
-                                    Create an account
+                                    Login an account
                                 </button>
 
                                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
-                                    Already have an account?
-                                    <a href="#" className="text-gray-700 underline">    Log in</a>.
+                                    Don't have an account?
+                                    <Link to="/register" className="text-gray-700 underline">    Sign up</Link>.
                                 </p>
                             </div>
                         </form>

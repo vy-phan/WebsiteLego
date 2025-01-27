@@ -33,17 +33,17 @@ const Navbar = () => {
 
             <div className="flex items-center gap-4">
               <div className="sm:flex sm:gap-4">
-                <a
+                <Link
                   className="inline-block rounded bg-red-600 px-8 py-3 text-sm font-medium text-white transition hover:rotate-2 hover:scale-110 focus:outline-none focus:ring active:bg-indigo-500"
-                  href="#"
+                  to="/login"
                 >
                   Login
-                </a>
+                </Link>
 
                 <div className="hidden sm:flex">
-                  <a
+                  <Link
                     className="group relative inline-block overflow-hidden border border-red-600 px-8 py-3 focus:outline-none focus:ring"
-                    href="#"
+                    to="/register"
                   >
                     <span
                       className="absolute inset-y-0 right-0 w-[2px] bg-red-600 transition-all group-hover:w-full group-active:bg-red-500"
@@ -54,7 +54,7 @@ const Navbar = () => {
                     >
                       Register
                     </span>
-                  </a>
+                  </Link>
                 </div>
               </div>
 

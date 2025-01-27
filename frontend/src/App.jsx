@@ -16,14 +16,18 @@ import Creativity from './pages/Creativity';
 import Quality from './pages/Quality';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ScrollToTop from './components/ScrollToTop';
+import DetailProduct from './pages/DetailProduct';
 
 function App() {
-
   return (
     <>
-        <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen">
         <Router>
+          {/* thanh menu */}
           <Navbar />
+          {/* thanh cuộn */}
+          <ScrollToTop />
           <main className="flex-grow">
             <Routes>
               <Route path="/" element={<Home />} />
@@ -32,6 +36,8 @@ function App() {
               <Route path="/creativity" element={<Creativity />} />
               <Route path="/quality" element={<Quality />} />
 
+              <Route path="/detail/:id" element={<DetailProduct />} />
+
               {/* Login and Register */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -39,7 +45,7 @@ function App() {
               {/* Admin */}
               <Route path="/admin" element={<AdminProduct />} />
 
-              {/* Add the 404 route at the end to catch all unmatched routes */}
+              {/* xử  lí khi người dùng nhập tào lao đá vô trang này  lỗi 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
