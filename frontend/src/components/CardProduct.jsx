@@ -1,19 +1,48 @@
-import React from 'react'
+import React, { useState , useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { FaStar } from "react-icons/fa6";
 import { FaBirthdayCake } from "react-icons/fa";
 import { FaCartPlus } from "react-icons/fa";
-import { useEffect } from "react";
 import useGetAges from '../hooks/useGetAges';
+// import useCart from '../hooks/useCart';
+import getLocalUser from '../context/getLocalUser';
 
 const CardProduct = ({ _id, name, description, price, image, age }) => {
   const { ages, loading, error, fetchAges } = useGetAges();
+  const [isAdding, setIsAdding] = useState(false);
+
+  const user = getLocalUser();
+  const userId = user?._id;
 
   useEffect(() => {
     fetchAges();
   }, []);
 
   const ageItem = ages.filter((ag) => ag._id === age);
+
+
+  // const { addProduct } = useCart();
+
+  // const handleAddToCart = async () => {
+  //   if (!userId) {
+  //     console.log('Vui lòng đăng nhập để thêm vào giỏ hàng');
+  //     return;
+  //   }
+
+  //   setIsAdding(true);
+  //   const products = [{ _id, quantity: 1, price }];
+  //   // const result = await addProduct(userId, products);
+    
+  //   if (result.success) {
+  //     console.log('Thêm vào giỏ hàng thành công!', result.data);
+  //   } else {
+  //     console.log('Lỗi khi thêm vào giỏ:', result.message || 'Có lỗi xảy ra');
+  //   }
+
+  //   setTimeout(() => {
+  //     setIsAdding(false);
+  //   }, 1000);
+  // }
 
   if (loading) return <div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
@@ -36,9 +65,6 @@ const CardProduct = ({ _id, name, description, price, image, age }) => {
       <div className="relative border border-gray-100 bg-white p-6">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold text-gray-900">${price}</span>
-          <span className="text-sm text-gray-500 line-through">
-            ${(price * 1.1).toFixed(2)}
-          </span>
         </div>
 
         <h3 className="mt-4 text-lg font-medium text-gray-900">
@@ -61,8 +87,17 @@ const CardProduct = ({ _id, name, description, price, image, age }) => {
           </div>
         </div>
 
-        <button className="mt-4 w-full flex items-center justify-center gap-2 bg-blue-600 px-5 py-3 text-white transition hover:bg-blue-700 rounded-lg">
-          <FaCartPlus />
+        <button
+          // onClick={handleAddToCart}
+          // disabled={isAdding}
+          className={`mt-4 w-full flex items-center justify-center gap-2 px-5 py-3 text-white transition rounded-lg ${isAdding
+            ? 'bg-blue-400 cursor-not-allowed'
+            : 'bg-blue-600 hover:bg-blue-700'
+            }  `
+          }
+        >
+
+          <FaCartPlus className={isAdding ? 'animate-spin' : ''} />
           Add to Cart
         </button>
       </div>

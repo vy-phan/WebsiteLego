@@ -1,7 +1,43 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import useRegister from '../hooks/useRegister'
+import { toast } from 'react-hot-toast'
 
 const Register = () => {
+  const navigate = useNavigate();
+  const { register, loading } = useRegister();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    passwordConfirm: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (formData.password !== formData.passwordConfirm) {
+      toast.error("Passwords do not match!");
+      return;
+    }
+
+    try {
+      await register(formData.username, formData.email, formData.password);
+      toast.success("Registration successful!");
+      navigate('/login');
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Registration failed!");
+    }
+  };
+
   return (
     <section className="bg-white">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12">
@@ -38,9 +74,7 @@ const Register = () => {
           </div>
         </section>
 
-        <main
-          className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6"
-        >
+        <main className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6">
           <div className="max-w-xl lg:max-w-3xl">
             <div className="relative -mt-16 block lg:hidden">
               <Link
@@ -60,8 +94,8 @@ const Register = () => {
               </p>
             </div>
 
-            <form action="#" className="mt-8 grid grid-cols-6 gap-6">
-              <div className="col-span-6 ">
+            <form onSubmit={handleSubmit} className="mt-8 grid grid-cols-6 gap-6">
+              <div className="col-span-6">
                 <label htmlFor="Username" className="block text-sm font-medium text-gray-700">
                   Username
                 </label>
@@ -70,29 +104,41 @@ const Register = () => {
                   type="text"
                   id="Username"
                   name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  required
                   className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
-
               <div className="col-span-6">
-                <label htmlFor="Email" className="block text-sm font-medium text-gray-700"> Email </label>
+                <label htmlFor="Email" className="block text-sm font-medium text-gray-700">
+                  Email
+                </label>
 
                 <input
                   type="email"
                   id="Email"
                   name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                   className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6 sm:col-span-3">
-                <label htmlFor="Password" className="block text-sm font-medium text-gray-700"> Password </label>
+                <label htmlFor="Password" className="block text-sm font-medium text-gray-700">
+                  Password
+                </label>
 
                 <input
                   type="password"
                   id="Password"
                   name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
                   className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
                 />
               </div>
@@ -105,45 +151,28 @@ const Register = () => {
                 <input
                   type="password"
                   id="PasswordConfirmation"
-                  name="password_confirmation"
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
+                  onChange={handleChange}
+                  required
                   className="mt-1 w-full rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
                 />
               </div>
 
               <div className="col-span-6">
-                <label htmlFor="MarketingAccept" className="flex gap-4">
-                  <input
-                    type="checkbox"
-                    id="MarketingAccept"
-                    name="marketing_accept"
-                    className="size-5 rounded-md border-2 border-gray-300 p-2 text-sm text-gray-700 shadow-sm"
-                  />
-
-                  <span className="text-sm text-gray-700">
-                    I want to receive emails about events, product updates and company announcements.
-                  </span>
-                </label>
-              </div>
-
-              <div className="col-span-6">
-                <p className="text-sm text-gray-500">
-                  By creating an account, you agree to our
-                  <a href="#" className="text-gray-700 underline"> terms and conditions </a>
-                  and
-                  <a href="#" className="text-gray-700 underline">privacy policy</a>.
-                </p>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-block w-full rounded-md bg-black px-12 py-3 text-sm font-medium text-white transition hover:bg-gray-800 focus:outline-none focus:ring focus:ring-yellow-400"
+                >
+                  {loading ? 'Creating Account...' : 'Create an account'}
+                </button>
               </div>
 
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
-                <button
-                  className="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
-                >
-                  Create an account
-                </button>
-
                 <p className="mt-4 text-sm text-gray-500 sm:mt-0">
                   Already have an account?
-                  <Link to="/login" className="text-gray-700 underline">    Log in</Link>.
+                  <Link to="/login" className="text-gray-700 underline ml-1">Log in</Link>.
                 </p>
               </div>
             </form>
@@ -151,7 +180,7 @@ const Register = () => {
         </main>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

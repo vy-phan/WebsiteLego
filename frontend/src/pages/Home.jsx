@@ -29,7 +29,6 @@ const Home = () => {
 
     const { products, loading, error, fetchProducts } = useGetProducts();
 
-    console.log(products);
 
     useEffect(() => {
         fetchProducts();
@@ -74,6 +73,7 @@ const Home = () => {
                 </div>
 
             </div>
+            
             <div className="text-center mt-12">
                 <Link to="/discover" className="bg-gray-900 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-700 transition-colors">
                     SEE MORE

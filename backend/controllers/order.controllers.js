@@ -7,7 +7,7 @@ export const createOrder = async (req, res) => {
     try {
         const order = req.body
 
-        if (!order.userId || !order.productIds || !order.quantity) {
+        if (!order.userId || !order.products)  {
             return res.status(400).json({success: false, message: "Vui lòng cung cấp tất cả thông tin"})
         }
 
@@ -16,12 +16,20 @@ export const createOrder = async (req, res) => {
             return res.status(404).json({success: false, message: "Tài khoản không tìm thấy"})
         }
 
+        const products = await Product.find({_id: {$in: order.productIds}})
+        if (products.length === 0) {
+            return res.status(404).json({success: false, message: "Sản phẩm không tìm thấy"})
+        }
+
         const newOrder = await Order.create({
             userId: order.userId,
-            productIds: order.productIds,
-            quantity: order.quantity
+            products: products.map(product => ({
+                productId: product._id,
+                quantity: product.quantity
+            })),
+            priceOrder: order.priceOrder
         })
-        res.status(200).json({success: true, data: order})
+        res.status(200).json({success: true, data: newOrder})
     } catch (error) {
         console.error("Lỗi tạo đơn hàng: ", error)
         res.status(500).json({success: false, message: "Lỗi tạo đơn hàng", error})
@@ -34,7 +42,7 @@ export const getOrdersByUser = async (req, res) => {
         if(!mongoose.Types.ObjectId.isValid(id)){
             return res.status(400).json({success: false, message: "ID không hợp lệ"})
         }
-        const orders = await Order.find({userId: id})
+        const orders = await Order.find({userId: id}).populate("products.productId")
         res.status(200).json({success: true, data: orders})
     } catch (error) {
         console.error("Lỗi lay đơn hàng theo tài khoản: ", error)
@@ -44,7 +52,7 @@ export const getOrdersByUser = async (req, res) => {
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await Order.find()
+        const orders = await Order.find().populate("products.productId")
         res.status(200).json({success: true, data: orders})
     } catch (error) {
         console.error("Lỗi lay danh sách đơn hàng: ", error)

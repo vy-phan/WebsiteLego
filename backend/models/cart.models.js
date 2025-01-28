@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 
-const orderSchema = new mongoose.Schema({    
+const cartSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
-    products: [
+    items: [
         {
             productId: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -15,20 +15,20 @@ const orderSchema = new mongoose.Schema({
             },
             quantity: {
                 type: Number,
+                required: true,
+                min: 1
+            },
+            priceSnapshot: {  // Lưu giá tại thời điểm thêm vào giỏ
+                type: Number,
                 required: true
             }
         }
     ],
-    status: {
-        type: String,
-        enum: ['pending', 'processing', 'shipped'],
-        default: 'pending'
-    },
-    priceOrder: {
+    total: {
         type: Number,
-        required: true
+        default: 0
     }
-}, { timestamps: true })
+}, { timestamps: true });
 
-const Order = mongoose.model('Order', orderSchema)
-export default Order
+const Cart = mongoose.model('Cart', cartSchema);
+export default Cart

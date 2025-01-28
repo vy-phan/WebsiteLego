@@ -18,8 +18,13 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ScrollToTop from './components/ScrollToTop';
 import DetailProduct from './pages/DetailProduct';
+import Cart from './pages/Cart';
+import AdminCategories from './pages/AdminCategories';
+import AdminAges from './pages/AdminAges';
+import getLocalUser from './context/getLocalUser';
 
 function App() {
+  const user = getLocalUser();
   return (
     <>
       <div className="flex flex-col min-h-screen">
@@ -37,13 +42,22 @@ function App() {
               <Route path="/quality" element={<Quality />} />
 
               <Route path="/detail/:id" element={<DetailProduct />} />
+              <Route path="/cart" element={<Cart />} />
 
               {/* Login and Register */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
 
               {/* Admin */}
-              <Route path="/admin" element={<AdminProduct />} />
+              {user?.role === "admin" ? (
+                <>
+                  <Route path="/admin" element={<AdminProduct />} />
+                  <Route path="/admin/categories" element={<AdminCategories />} />
+                  <Route path="/admin/ages" element={<AdminAges />} />
+                </>
+              ) : (
+                <Route path="/admin" element={<NotFound />} />
+              )}
 
               {/* xử  lí khi người dùng nhập tào lao đá vô trang này  lỗi 404 */}
               <Route path="*" element={<NotFound />} />

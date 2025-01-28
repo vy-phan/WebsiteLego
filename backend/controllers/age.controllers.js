@@ -36,6 +36,20 @@ export const getAgesById = async (req, res) => {
     }
 }
 
+export const updateAgeById = async (req, res) => {
+    try {
+        const {id} = req.params
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(400).json({success: false, message: "ID không hợp lệ"})
+        }
+        const age = await Age.findByIdAndUpdate(id, req.body, {new: true})
+        res.status(200).json({success: true, data: age})
+    } catch (error) {
+        console.error("Lỗi cập nhật age theo ID: ", error)
+        res.status(500).json({success: false, message: "Lỗi cập nhật age theo ID", error})
+    }
+}
+
 export const deleteAgeById = async (req, res) => {
     try {
         const {id} = req.params
