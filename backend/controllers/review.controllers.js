@@ -8,7 +8,7 @@ export const createReviewByProductId = async (req, res) => {
         const review = req.body
         
         // kiem tra dien du thong tin
-        if(!review.productId || !review.userId || !review.rating ){
+        if(!review.productId || !review.userId  ){
             return res.status(400).json({success: false, message: "Vui lòng cung cấp tất cả thông tin"})
         }
 

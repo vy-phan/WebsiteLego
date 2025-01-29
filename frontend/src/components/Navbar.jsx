@@ -1,11 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getLocalUser } from '../context/getLocalUser'
-import { FaCartPlus } from 'react-icons/fa6';
+import { FaCartPlus } from 'react-icons/fa';
+import { FaUser } from "react-icons/fa";
+import getLocalUser from '../context/getLocalUser';
+import { useCartContext } from '../context/CartContext';
 
 const Navbar = () => {
   const user = getLocalUser()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { cartItemCount } = useCartContext();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -18,7 +21,7 @@ const Navbar = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (isDropdownOpen) {
       document.addEventListener('click', handleClickOutside);
     }
@@ -92,16 +95,16 @@ const Navbar = () => {
                       </a>
 
                       {user.role === 'admin' && (
-                      <div className="p-2">
-                        <Link
-                          to="/admin"
-                          className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                          role="menuitem"
-                        >
-                          Administrator
-                        </Link>
-                      </div>
-                    )}
+                        <div className="p-2">
+                          <Link
+                            to="/admin"
+                            className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                            role="menuitem"
+                          >
+                            Administrator
+                          </Link>
+                        </div>
+                      )}
 
                       <Link
                         to="/cart"
@@ -109,9 +112,11 @@ const Navbar = () => {
                         role="menuitem"
                       >
                         <FaCartPlus className="text-lg" />
-                        <span className="ms-2 mb-5 inline-flex items-center justify-center rounded-full bg-red-500 px-2 py-1 text-xs font-bold leading-none text-white">
-                          0
-                        </span>
+                        {cartItemCount > 0 && (
+                          <span className="ms-2 mb-5 inline-flex items-center justify-center rounded-full bg-red-500 px-2 py-1 text-xs font-bold leading-none text-white">
+                            {cartItemCount}
+                          </span>
+                        )}
                       </Link>
 
                     </div>
@@ -139,7 +144,13 @@ const Navbar = () => {
                               d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
                             />
                           </svg>
-                          Logout
+
+                          <Link
+                            className="ms-2"
+                            to="/login"
+                          >
+                            Logout
+                          </Link>
                         </button>
                       </form>
                     </div>

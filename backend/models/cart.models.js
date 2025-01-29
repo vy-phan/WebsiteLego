@@ -17,10 +17,6 @@ const cartSchema = new mongoose.Schema({
                 type: Number,
                 required: true,
                 min: 1
-            },
-            priceSnapshot: {  // Lưu giá tại thời điểm thêm vào giỏ
-                type: Number,
-                required: true
             }
         }
     ],

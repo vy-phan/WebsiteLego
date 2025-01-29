@@ -81,3 +81,34 @@ export const logout = async(req,res)=>{
         res.status(500).json({error:"internal Server Error"})
     }
 }
+
+export const getUserById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Kiểm tra id có hợp lệ không
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "ID không hợp lệ" });
+        }
+
+        // Tìm user theo id
+        const user = await User.findById(id).select('-password'); // Loại bỏ trường password
+        if (!user) {
+            return res.status(404).json({ success: false, message: "Không tìm thấy người dùng" });
+        }
+
+        // Trả về thông tin user
+        res.status(200).json({
+            success: true,
+            data: {
+                _id: user._id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error("Lỗi lấy thông tin người dùng: ", error);
+        res.status(500).json({ success: false, message: "Lỗi lấy thông tin người dùng", error });
+    }
+};

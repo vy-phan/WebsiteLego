@@ -1,116 +1,206 @@
-import React, { useEffect } from 'react'
-import  useGetProducts  from '../hooks/useGetProducts';
+import React, { useEffect, useState } from 'react';
+import useCart from '../hooks/useCart';
+import getLocalUser from '../context/getLocalUser';
+import { useCartContext } from '../context/CartContext';
+import { FaPlus, FaMinus, FaTrash } from 'react-icons/fa';
+import { getCodeDiscount } from '../utils/code';
+
+const formatPrice = (price) => {
+  return Number(price).toFixed(2);
+};
+
 const Cart = () => {
+  const user = getLocalUser();
+  const userId = user?._id;
+  const { getCart, updateQuantity, removeFromCart } = useCart();
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { fetchCartCount } = useCartContext();
+  const [discountCode, setDiscountCode] = useState('');
 
-    const { products, loading, error, fetchProducts } = useGetProducts();
-    useEffect(() => {
-        fetchProducts();
-    }, []);
+  useEffect(() => {
+    if (userId) {
+      fetchCart();
+    }
+  }, [userId]);
 
+  const fetchCart = async () => {
+    setLoading(true);
+    const result = await getCart(userId);
+    if (result.success) {
+      setCart(result.data);
+    }
+    setLoading(false);
+  };
+
+  const handleQuantityChange = async (productId, newQuantity) => {
+    // Validate quantity
+    if (newQuantity < 1) {
+      newQuantity = 1;
+    }
+    if (newQuantity > 99) {
+      newQuantity = 99;
+    }
+
+    const result = await updateQuantity(userId, productId, newQuantity);
+    if (result.success) {
+      fetchCart();
+      fetchCartCount();
+    } else {
+      alert('Lỗi khi cập nhật số lượng: ' + (result.message || 'Có lỗi xảy ra'));
+    }
+  };
+
+  const handleRemoveItem = async (productId) => {
+    if (window.confirm('Are you sure you want to remove this item from your cart?')) {
+      const result = await removeFromCart(userId, productId);
+      if (result.success) {
+        fetchCart();
+        fetchCartCount();
+      } else {
+        alert('Lỗi khi xóa sản phẩm: ' + (result.message || 'Có lỗi xảy ra'));
+      }
+    }
+  };
+
+
+  if (!userId) {
     return (
-        <section>
-            <div className="mx-auto max-w-screen-xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8">
-                <div className="mx-auto max-w-3xl">
-                    <header className="text-center">
-                        <h1 className="text-xl font-bold text-gray-900 sm:text-3xl">Your Cart</h1>
-                    </header>
+      <div className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold mb-4">Please login to view your cart</h2>
+      </div>
+    );
+  }
 
-                    <div className="mt-8">
-                        <ul className="space-y-4">
-                            {products.map((item) => (
-                                <li key={item.productId} className="flex items-center gap-4">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="size-16 rounded object-cover"
-                                    />
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse">
+          <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+          <div className="h-64 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+    );
+  }
 
-                                    <div>
-                                        <h3 className="text-sm text-gray-900">{item.name}</h3>
-                                        <dl className="mt-0.5 space-y-px text-[10px] text-gray-600">
-                                            <div>
-                                                <dd className="inline">Product Id: {item.productId}</dd>
-                                            </div>
-                                        </dl>
-                                    </div>
+  if (!cart || !cart.items || cart.items.length === 0) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
+      </div>
+    );
+  }
 
-                                    <div className="flex flex-1 items-center justify-end gap-2">
-                                        <form>
-                                            <label htmlFor={`quantity-${item._id}`} className="sr-only">
-                                                Quantity
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min="1"
-                                                value={item.quantity}
-                                                id={`quantity-${item._id}`}
-                                                // onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value))}
-                                                className="h-8 w-12 rounded border-gray-200 bg-gray-50 p-0 text-center text-xs text-gray-600 [-moz-appearance:_textfield] focus:outline-none [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none"
-                                            />
-                                        </form>
-                                        <div>
-                                            <dd className="inline">${item.price}</dd>
-                                        </div>
+  const total = cart.items.reduce((sum, item) => sum + item.productId.price * item.quantity, 0);
+  const totalPrice = getCodeDiscount(discountCode) ? total - (getCodeDiscount(discountCode)/100 * total) : total;
 
-                                        <button
-                                            // onClick={() => handleRemoveItem(item.productId)}
-                                            className="text-gray-600 transition hover:text-red-600"
-                                        >
-                                            <span className="sr-only">Remove item</span>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth="1.5"
-                                                stroke="currentColor"
-                                                className="size-4"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-
-                        <div className="mt-8 flex justify-end border-t border-gray-100 pt-8">
-                            <div className="w-screen max-w-lg space-y-4">
-                                <dl className="space-y-0.5 text-sm text-gray-700">
-                                    <div className="flex justify-between">
-                                        <dt>Subtotal</dt>
-                                        {/* <dd>${subtotal}</dd> */}
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <dt>Discount</dt>
-                                        {/* <dd>-${discount}</dd> */}
-                                    </div>
-
-                                    <div className="flex justify-between !text-base font-medium">
-                                        <dt>Total</dt>
-                                        {/* <dd>${total}</dd> */}
-                                    </div>
-                                </dl>
-
-                                <div className="flex justify-end">
-                                    <a
-                                        href="#"
-                                        className="block rounded bg-gray-700 px-5 py-3 text-sm text-gray-100 transition hover:bg-gray-600"
-                                    >
-                                        Checkout
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h2 className="text-2xl font-bold mb-4">Your cart</h2>
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="flow-root">
+          <ul className="-my-6 divide-y divide-gray-200">
+            {cart.items.map((item) => (
+              <li key={item.productId._id} className="flex py-6">
+                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                  <img
+                    src={item.productId.image}
+                    alt={item.productId.name}
+                    className="h-full w-full object-cover object-center"
+                  />
                 </div>
-            </div>
-        </section>
-    )
-}
 
-export default Cart
+                <div className="ml-4 flex flex-1 flex-col">
+                  <div>
+                    <div className="flex justify-between text-base font-medium text-gray-900">
+                      <h3>{item.productId.name}</h3>
+                      <p className="ml-4">${formatPrice(item.productId.price * item.quantity)}</p>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-500 line-clamp-2">{item.productId.description}</p>
+                  </div>
+                  <div className="flex flex-1 items-end justify-between text-sm">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleQuantityChange(item.productId._id, item.quantity - 1)}
+                        className="p-1 rounded bg-gray-100 hover:bg-gray-200"
+                      >
+                        <FaMinus className="text-gray-600" />
+                      </button>
+                      
+                      <input
+                        type="number"
+                        min="1"
+                        max="99"
+                        value={item.quantity}
+                        onChange={(e) => handleQuantityChange(item.productId._id, parseInt(e.target.value) || 1)}
+                        className="w-16 text-center border rounded p-1"
+                      />
+                      
+                      <button
+                        onClick={() => handleQuantityChange(item.productId._id, item.quantity + 1)}
+                        className="p-1 rounded bg-gray-100 hover:bg-gray-200"
+                      >
+                        <FaPlus className="text-gray-600" />
+                      </button>
+                    </div>
+
+                    <div className="flex">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveItem(item.productId._id)}
+                        className="font-medium text-red-600 hover:text-red-500 flex items-center"
+                      >
+                        <FaTrash className="mr-1" /> Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+          <div className="flex justify-between text-base font-medium text-gray-900">
+            <p>Total Price</p>
+            <p>$ {formatPrice(totalPrice)}</p>
+          </div>
+          <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+          <div className="mt-6">
+            <label htmlFor="discount-code" className="sr-only">
+              Discount code
+            </label>
+            <div className="flex justify-end">
+              <input
+                type="text"
+                name="discount-code"
+                id="discount-code"
+                value={discountCode}
+                onChange={(e) => setDiscountCode(e.target.value)}
+                placeholder="Discount code"
+                className="block  px-2 py-1 text-sm text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              />
+            </div>
+          </div>
+          <div className="mt-6 ">
+            <button
+              className="w-full flex justify-center items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+            >
+              Payment
+            </button>
+          </div>
+          <div className="mt-6 flex justify-center text-center text-sm text-gray-500">
+            <p>
+              or{' '}
+              <a href="/" className="font-medium text-indigo-600 hover:text-indigo-500">
+                Continue shopping<span aria-hidden="true"> &rarr;</span>
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Cart;

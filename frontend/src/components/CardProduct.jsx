@@ -1,14 +1,17 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { FaStar } from "react-icons/fa6";
 import { FaBirthdayCake } from "react-icons/fa";
 import { FaCartPlus } from "react-icons/fa";
 import useGetAges from '../hooks/useGetAges';
-// import useCart from '../hooks/useCart';
+import useCart from '../hooks/useCart';
 import getLocalUser from '../context/getLocalUser';
+import { useCartContext } from '../context/CartContext';
 
 const CardProduct = ({ _id, name, description, price, image, age }) => {
   const { ages, loading, error, fetchAges } = useGetAges();
+  const { addToCart } = useCart();
+  const { fetchCartCount } = useCartContext();
   const [isAdding, setIsAdding] = useState(false);
 
   const user = getLocalUser();
@@ -20,33 +23,31 @@ const CardProduct = ({ _id, name, description, price, image, age }) => {
 
   const ageItem = ages.filter((ag) => ag._id === age);
 
+  const handleAddToCart = async () => {
+    if (!userId) {
+      alert('Vui lòng đăng nhập để thêm vào giỏ hàng');
+      return;
+    }
 
-  // const { addProduct } = useCart();
-
-  // const handleAddToCart = async () => {
-  //   if (!userId) {
-  //     console.log('Vui lòng đăng nhập để thêm vào giỏ hàng');
-  //     return;
-  //   }
-
-  //   setIsAdding(true);
-  //   const products = [{ _id, quantity: 1, price }];
-  //   // const result = await addProduct(userId, products);
+    setIsAdding(true);
+    const result = await addToCart(userId, _id, 1);
     
-  //   if (result.success) {
-  //     console.log('Thêm vào giỏ hàng thành công!', result.data);
-  //   } else {
-  //     console.log('Lỗi khi thêm vào giỏ:', result.message || 'Có lỗi xảy ra');
-  //   }
+    if (result.success) {
+      alert('Thêm vào giỏ hàng thành công!');
+      fetchCartCount(); // Refresh số lượng giỏ hàng
+    } else {
+      alert('Lỗi khi thêm vào giỏ: ' + (result.message || 'Có lỗi xảy ra'));
+    }
 
-  //   setTimeout(() => {
-  //     setIsAdding(false);
-  //   }, 1000);
-  // }
+    setTimeout(() => {
+      setIsAdding(false);
+    }, 1000);
+  }
 
   if (loading) return <div className="flex items-center justify-center h-screen">
     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500"></div>
   </div>;
+  
   if (error) return <p className="text-red-500 text-center">{error.message}</p>;
 
   return (
@@ -88,17 +89,16 @@ const CardProduct = ({ _id, name, description, price, image, age }) => {
         </div>
 
         <button
-          // onClick={handleAddToCart}
-          // disabled={isAdding}
+          onClick={handleAddToCart}
+          disabled={isAdding}
           className={`mt-4 w-full flex items-center justify-center gap-2 px-5 py-3 text-white transition rounded-lg ${isAdding
             ? 'bg-blue-400 cursor-not-allowed'
             : 'bg-blue-600 hover:bg-blue-700'
             }  `
           }
         >
-
           <FaCartPlus className={isAdding ? 'animate-spin' : ''} />
-          Add to Cart
+          {isAdding ? 'Adding...' : 'Add to Cart'}
         </button>
       </div>
     </div>

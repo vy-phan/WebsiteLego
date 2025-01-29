@@ -8,6 +8,7 @@ import categoriesRouter from './router/categories.route.js'
 import reviewsRouter from './router/reviews.router.js'
 import ordersRouter from './router/orders.router.js'
 import agesRouter from './router/ages.router.js'
+import cartRouter from './router/cart.routes.js'
 
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.use('/api/categories',categoriesRouter)
 app.use('/api/ages',agesRouter)
 app.use('/api/orders',ordersRouter)
 app.use('/api/reviews',reviewsRouter)
+app.use('/api/cart',cartRouter)
 
 
 app.listen(PORT , () => {
