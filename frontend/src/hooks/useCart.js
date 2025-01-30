@@ -51,7 +51,7 @@ const useCart = () => {
         }
     };
 
-    // Cập nhật số lượng
+    // Cập nhật số lượng sản phẩm
     const updateQuantity = async (userId, productId, quantity) => {
         setLoading(true);
         setError(null);
@@ -75,7 +75,7 @@ const useCart = () => {
         }
     };
 
-    // Xóa sản phẩm khỏi giỏ
+    // Xóa sản phẩm khỏi giỏ hàng
     const removeFromCart = async (userId, productId) => {
         setLoading(true);
         setError(null);
@@ -86,7 +86,28 @@ const useCart = () => {
                 data: response.data.data
             };
         } catch (err) {
-            setError(err.response?.data?.message || 'Error removing item');
+            setError(err.response?.data?.message || 'Error removing from cart');
+            return {
+                success: false,
+                message: err.response?.data?.message
+            };
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Xóa toàn bộ giỏ hàng
+    const deleteCart = async (cartId) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await axios.delete(`/api/cart/${cartId}`);
+            return {
+                success: true,
+                data: response.data.data
+            };
+        } catch (err) {
+            setError(err.response?.data?.message || 'Error deleting cart');
             return {
                 success: false,
                 message: err.response?.data?.message
@@ -102,7 +123,8 @@ const useCart = () => {
         addToCart,
         getCart,
         updateQuantity,
-        removeFromCart
+        removeFromCart,
+        deleteCart
     };
 };
 

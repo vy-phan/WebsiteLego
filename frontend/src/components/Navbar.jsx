@@ -4,14 +4,21 @@ import { FaCartPlus } from 'react-icons/fa';
 import { FaUser } from "react-icons/fa";
 import getLocalUser from '../context/getLocalUser';
 import { useCartContext } from '../context/CartContext';
+import useLogout from '../hooks/useLogout';
 
 const Navbar = () => {
   const user = getLocalUser()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { cartItemCount } = useCartContext();
+  const logout = useLogout();
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsDropdownOpen(false);
   };
 
   // Close dropdown when clicking outside
@@ -86,13 +93,13 @@ const Navbar = () => {
                     role="menu"
                   >
                     <div className="p-2">
-                      <a
-                        href="#"
+                      <Link
+                        to="/profile"
                         className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
                         role="menuitem"
                       >
                         My profile
-                      </a>
+                      </Link>
 
                       {user.role === 'admin' && (
                         <div className="p-2">
@@ -148,6 +155,7 @@ const Navbar = () => {
                           <Link
                             className="ms-2"
                             to="/login"
+                            onClick={handleLogout}
                           >
                             Logout
                           </Link>

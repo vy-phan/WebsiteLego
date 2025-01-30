@@ -77,12 +77,12 @@ const CardDiscover = ({ product }) => {
                         {isAdding ? 'Adding...' : 'Add to Cart'}
                     </button>
 
-                    <button
+                    {/* <button
                         type="button"
                         className="block w-full rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white transition hover:scale-105"
                     >
                         Buy Now
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

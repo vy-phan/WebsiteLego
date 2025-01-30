@@ -7,6 +7,7 @@ import CardProduct from '../components/CardProduct'
 import useGetProducts from '../hooks/useGetProducts'
 import { Link } from 'react-router-dom'
 import Newleater from '../components/Newleater'
+import Categories from '../components/Categories'
 
 const Home = () => {
     const productes = [
@@ -59,6 +60,14 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* Categories section */}
+            <Categories />
+
+            {/* hiển thị tiêu đề sản phẩm gợi ý cho bạn */}
+            <div className="text-center my-12">
+                <h2 className="text-3xl font-bold text-rose-600">What's new</h2>
+            </div>
+            
             {/* hiển thị sảnn phẩm random  */}
             <div className="mx-auto max-w-screen-xl px-4  sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-4">

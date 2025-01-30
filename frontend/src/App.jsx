@@ -23,6 +23,9 @@ import AdminCategories from './pages/AdminCategories';
 import AdminAges from './pages/AdminAges';
 import getLocalUser from './context/getLocalUser';
 import { CartProvider } from './context/CartContext';
+import Payment from './pages/Payment';
+import Fun from './pages/Fun';
+import Profile from './pages/Profile';
 
 function App() {
   const user = getLocalUser();
@@ -42,9 +45,12 @@ function App() {
                 <Route path="/about" element={<AboutUs />} />
                 <Route path="/creativity" element={<Creativity />} />
                 <Route path="/quality" element={<Quality />} />
+                <Route path="/fun" element={<Fun />} />
+                <Route path="/profile" element={<Profile />} />
 
                 <Route path="/detail/:id" element={<DetailProduct />} />
                 <Route path="/cart" element={<Cart />} />
+                <Route path="/payment" element={<Payment />} />
 
                 {/* Login and Register */}
                 <Route path="/login" element={<Login />} />
