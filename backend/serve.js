@@ -9,6 +9,7 @@ import reviewsRouter from './router/reviews.router.js'
 import ordersRouter from './router/orders.router.js'
 import agesRouter from './router/ages.router.js'
 import cartRouter from './router/cart.routes.js'
+import stripeRouter from './router/stripe.router.js'
 
 dotenv.config()
 
@@ -25,6 +26,7 @@ app.use('/api/ages',agesRouter)
 app.use('/api/orders',ordersRouter)
 app.use('/api/reviews',reviewsRouter)
 app.use('/api/cart',cartRouter)
+app.use('/api/payment', stripeRouter)
 
 
 app.listen(PORT , () => {

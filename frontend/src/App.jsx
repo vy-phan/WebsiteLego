@@ -24,6 +24,8 @@ import AdminAges from './pages/AdminAges';
 import getLocalUser from './context/getLocalUser';
 import { CartProvider } from './context/CartContext';
 import Payment from './pages/Payment';
+import PaymentSuccess from './pages/PaymentSuccess';
+import PaymentFailed from './pages/PaymentFailed';
 import Fun from './pages/Fun';
 import Profile from './pages/Profile';
 
@@ -51,6 +53,8 @@ function App() {
                 <Route path="/detail/:id" element={<DetailProduct />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/payment" element={<Payment />} />
+                <Route path="/payment-success" element={<PaymentSuccess />} />
+                <Route path="/payment-failed" element={<PaymentFailed />} />
 
                 {/* Login and Register */}
                 <Route path="/login" element={<Login />} />
