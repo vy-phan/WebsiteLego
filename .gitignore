@@ -3,6 +3,7 @@
 /.pnp
 .pnp.js
 
+
 # Testing
 /coverage
 
@@ -11,6 +12,7 @@
 /dist
 
 # Environment files
+.env
 .env.local
 .env.development.local
 .env.test.local
