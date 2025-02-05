@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('userLego');
+    return {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+};
+
 const useCart = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -14,7 +24,7 @@ const useCart = () => {
                 userId,
                 productId,
                 quantity
-            });
+            }, getAuthHeaders());
             return {
                 success: true,
                 data: response.data.data
@@ -35,7 +45,7 @@ const useCart = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.get(`/api/cart/${userId}`);
+            const response = await axios.get(`/api/cart/${userId}`, getAuthHeaders());
             return {
                 success: true,
                 data: response.data.data
@@ -59,7 +69,7 @@ const useCart = () => {
             const response = await axios.put(`/api/cart/${userId}/update`, {
                 productId,
                 quantity
-            });
+            }, getAuthHeaders());
             return {
                 success: true,
                 data: response.data.data
@@ -80,7 +90,7 @@ const useCart = () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await axios.delete(`/api/cart/${userId}/${productId}`);
+            const response = await axios.delete(`/api/cart/${userId}/${productId}`, getAuthHeaders());
             return {
                 success: true,
                 data: response.data.data

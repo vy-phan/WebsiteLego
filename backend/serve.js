@@ -10,6 +10,7 @@ import ordersRouter from './router/orders.router.js'
 import agesRouter from './router/ages.router.js'
 import cartRouter from './router/cart.routes.js'
 import stripeRouter from './router/stripe.router.js'
+import cookieParser from 'cookie-parser'
 
 dotenv.config()
 
@@ -18,6 +19,7 @@ const app = express()
 
 app.use(express.json()) 
 app.use(cors())
+app.use(cookieParser())
 
 app.use('/api/auth',usersRouter)
 app.use('/api/products',productsRouter)

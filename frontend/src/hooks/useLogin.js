@@ -1,10 +1,12 @@
 import axios from "axios";
 import { useState } from "react";
+import { useAuthContext } from "../context/AuthContext";
 
 const useLogin = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);   
+    const { setAuthUser } = useAuthContext();
 
     const login = async (email, password) => {
         setLoading(true);
@@ -23,6 +25,7 @@ const useLogin = () => {
             };
             
             setUser(userData);
+            setAuthUser(userData);
             // Store user data in localStorage with key 'userLego'
             localStorage.setItem('userLego', JSON.stringify(userData));
             return response.data;
@@ -38,6 +41,7 @@ const useLogin = () => {
         try {
             await axios.post("/api/auth/logout");
             setUser(null);
+            setAuthUser(null);
             localStorage.removeItem('userLego');
         } catch (err) {
             console.error("Logout error:", err);

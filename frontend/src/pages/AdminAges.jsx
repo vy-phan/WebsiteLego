@@ -3,6 +3,7 @@ import useGetAges from '../hooks/useGetAges';
 import SlideBar from '../components/SlideBar';
 import useGetProducts from '../hooks/useGetProducts';
 import { postAge, updateAge, deleteAge } from '../hooks/useCUD_Ages';
+import { useAuthContext } from '../context/AuthContext';
 
 const AdminAges = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -10,6 +11,7 @@ const AdminAges = () => {
     const [selectedAge, setSelectedAge] = useState(null);
     const { ages, loading, error, fetchAges } = useGetAges();
     const { products, loading: loadingProducts, error: errorProducts, fetchProducts } = useGetProducts();
+    const { authUser } = useAuthContext();
 
     useEffect(() => {
         fetchAges();
@@ -35,10 +37,11 @@ const AdminAges = () => {
         const name = ages.find((age) => age._id === id)?.ageRange;
         if (confirm(`Are you sure you want to delete this age: ${name}?`)) {
             try {
-                await deleteAge(id);
+                await deleteAge(id, authUser);
                 await fetchAges(); // Cập nhật danh sách
             } catch (err) {
                 console.error('Error deleting age:', err);
+                alert(err.message);
             }
         }
     };
@@ -50,14 +53,15 @@ const AdminAges = () => {
 
         try {
             if (modalMode === 'add') {
-                await postAge({ ageRange });
+                await postAge({ ageRange }, authUser);
             } else {
-                await updateAge(selectedAge._id, { ageRange });
+                await updateAge(selectedAge._id, { ageRange }, authUser);
             }
             setIsModalOpen(false);
             await fetchAges(); // Cập nhật danh sách sau khi thêm/sửa
         } catch (err) {
             console.error('Error updating age:', err);
+            alert(err.message);
         }
     };
 

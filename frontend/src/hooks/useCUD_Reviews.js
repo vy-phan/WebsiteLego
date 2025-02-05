@@ -1,12 +1,22 @@
 import axios from 'axios';
 
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('userLego');
+    return {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+};
+
 const useReview = () => {
     const postReview = async (review) => {
         try {
             if (!review.productId || !review.userId) {
                 return { success: false, message: "Vui lòng cung cấp tất cả thông tin" }
             }
-            const response = await axios.post("/api/reviews/", review);
+            const response = await axios.post("/api/reviews/", review, getAuthHeaders());
             return response.data.data;
         } catch (error) {
             console.error("Lỗi tạo review: ", error);

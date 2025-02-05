@@ -25,6 +25,8 @@ const CheckoutForm = ({ totalPrice, orderData, onSuccess, values, navigate }) =>
     const [error, setError] = useState(null);
     const [processing, setProcessing] = useState(false);
 
+    
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setProcessing(true);

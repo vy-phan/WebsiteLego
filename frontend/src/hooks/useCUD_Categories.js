@@ -1,8 +1,18 @@
 import axios from "axios";
 
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+    const token = localStorage.getItem('userLego');
+    return {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    };
+};
+
 export const postCategory = async (category) => {
     try {
-        const response = await axios.post("/api/categories/", category);
+        const response = await axios.post("/api/categories/", category, getAuthHeaders());
         return response.data.data;
     } catch (error) {
         console.error("Lỗi tạo category: ", error);
@@ -12,7 +22,7 @@ export const postCategory = async (category) => {
 
 export const updateCategory = async (id, category) => {
     try {
-        const response = await axios.put(`/api/categories/${id}`, category);
+        const response = await axios.put(`/api/categories/${id}`, category, getAuthHeaders());
         return response.data.data;
     } catch (error) {
         console.error("Lỗi cập nhật category: ", error);
@@ -22,7 +32,7 @@ export const updateCategory = async (id, category) => {
 
 export const deleteCategory = async (id) => {
     try {
-        const response = await axios.delete(`/api/categories/${id}`);
+        const response = await axios.delete(`/api/categories/${id}`, getAuthHeaders());
         return response.data.data;
     } catch (error) {
         console.error("Lỗi xóa category: ", error);
